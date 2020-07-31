@@ -21,21 +21,17 @@ public class Main {
 	    
 	    public Main()
 	    {
-
+			System.out.println("Spawner In Light: Registering Mod.");
 			FMLJavaModLoadingContext.get().getModEventBus().register(this);
 	        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER,MyConfig.SERVER_SPEC );
 	    }
 
-	    @Mod.EventBusSubscriber()
-	    public static class ForgeEvents
-	    {
-			@SubscribeEvent 
-			public static void preInit (final FMLServerStartingEvent  event) {
+
+		@SubscribeEvent 
+		public void preInit (final FMLCommonSetupEvent event) {
 				System.out.println("Spawner In Light: Registering Handler");
 				MinecraftForge.EVENT_BUS.register(new SpawnerSpawnEvent());
 				
-			}       
-	    
-	    }
+		}       
 
 }

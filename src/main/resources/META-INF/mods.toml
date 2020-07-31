@@ -1,0 +1,25 @@
+modLoader="javafml"
+loaderVersion="[32,)"
+license="MIT License"
+[[mods]]
+modId="spawnerinlight"
+version="${file.jarVersion}"
+displayName="Regrowth Mod"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/spawner-in-light"
+updateJSONURL="https://github.com/mactso/SpawnerInLight/raw/master/update.json"
+logoFile="RegrowthMod.png"
+authors="MacTso, Lupicus"
+description='''Regrowth Mod.'''
+[[dependencies.spawnerinlight]]
+    modId="forge"
+    mandatory=true
+    versionRange="[32,)"
+    ordering="NONE"
+    side="SERVER"
+
+[[dependencies.spawnerinlight]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.1]"
+    ordering="NONE"
+    side="SERVER"
