@@ -29,9 +29,9 @@ package com.mactso.spawnerinlight.config;
 		}
 
 		public static int debugLevel;
-		public static boolean SpawnersSpawnInLight;
-		public static boolean SpawnersExplode;
-		public static double breakPercentage;
+		public static boolean spawnersSpawnInLight;
+		public static boolean spawnersExplode;
+		public static double spawnersBreakPercentage;
 		
 		@SubscribeEvent
 		public static void onModConfigEvent(final ModConfig.ModConfigEvent configEvent)
@@ -45,9 +45,9 @@ package com.mactso.spawnerinlight.config;
 		public static void bakeConfig()
 		{
 			debugLevel = SERVER.debugLevel.get();
-			SpawnersSpawnInLight = SERVER.SpawnersSpawnInLight.get();
-			SpawnersExplode = SERVER.SpawnersExplode.get();
-			breakPercentage = SERVER.breakPercentage.get();
+			spawnersSpawnInLight = SERVER.spawnersSpawnInLight.get();
+			spawnersExplode = SERVER.spawnersExplode.get();
+			spawnersBreakPercentage = SERVER.spawnersBreakPercentage.get();
 
 		}
 
@@ -56,9 +56,9 @@ package com.mactso.spawnerinlight.config;
 		{
 
 			public final IntValue debugLevel;
-			public static BooleanValue SpawnersSpawnInLight;
-			public static BooleanValue SpawnersExplode;
-			public static DoubleValue breakPercentage;
+			public static BooleanValue spawnersSpawnInLight;
+			public static BooleanValue spawnersExplode;
+			public static DoubleValue spawnersBreakPercentage;
 			
 			public Server(ForgeConfigSpec.Builder builder)
 			{
@@ -69,19 +69,19 @@ package com.mactso.spawnerinlight.config;
 						.translation(Main.MODID + ".config." + "debugLevel")
 						.defineInRange("debugLevel", () -> 0, 0, 2);
 			
-				breakPercentage = builder
-						.comment("Respawn Percentage")
-						.translation(Main.MODID + ".config." + "breakPercentage")
-						.defineInRange("breakPercentage", () -> .02, 0.0, 10.0);
-				SpawnersSpawnInLight = builder
-						.comment("Zombie Deaths In Hard Mode")
-						.translation(Main.MODID + ".config." + "SpawnersSpawnInLight")
-						.define ("SpawnersSpawnInLight", () -> true);
+				spawnersBreakPercentage = builder
+						.comment("Spawner Break Percentage")
+						.translation(Main.MODID + ".config." + "spawnersBreakPercentage")
+						.defineInRange("spawnersBreakPercentage", () -> .02, 0.0, 10.0);
+				spawnersSpawnInLight = builder
+						.comment("Spawners in Light avail config value")
+						.translation(Main.MODID + ".config." + "spawnersSpawnInLight")
+						.define ("spawnersSpawnInLight", () -> true);
 				
-				SpawnersExplode = builder
-						.comment("Zombie Deaths In Hard Mode")
-						.translation(Main.MODID + ".config." + "SpawnersExplode")
-						.define ("SpawnersExplode", () -> true);
+				spawnersExplode = builder
+						.comment("Spawners Explode on Break")
+						.translation(Main.MODID + ".config." + "spawnersExplode")
+						.define ("spawnersExplode", () -> true);
 				
 				builder.pop();
 			}

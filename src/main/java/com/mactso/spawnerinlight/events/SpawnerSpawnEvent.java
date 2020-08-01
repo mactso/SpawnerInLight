@@ -2,12 +2,20 @@ package com.mactso.spawnerinlight.events;
 
 import java.util.Random;
 
+import com.mactso.spawnerinlight.config.MyConfig;
+
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.SpawnerBlock;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.monster.BlazeEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.entity.passive.PigEntity;
+import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.IWorld;
@@ -32,33 +40,52 @@ public class SpawnerSpawnEvent {
 //
 //      Look at beekeeper
 //	    
-
-    	int debugline = 7;
+    	if (event.getSpawnReason() != SpawnReason.SPAWNER) {
+    		return;
+    	}
+    	
+    	IWorld iWorld = event.getWorld();
+    	// check that it's server world.
+    	
     	System.out.println ("SpawnerInLight Checked Spawner Spawn Event.");
     	boolean spawnOk = false;
 
     	AbstractSpawner AbSp = event.getSpawner();
-    	if (AbSp == null) {
-    		return;
-    	}
+
+    	BlockPos AbSpPos = AbSp.getSpawnerPosition();
+
     	System.out.println ("SpawnerInLight: Event has a spawner.");
 
-    	System.out.println ("SpawnerInLight: Event status: " + event.getResult() );
-    	
         LivingEntity le = (LivingEntity) event.getEntityLiving();
-        if (event.getResult() == Event.Result.DENY) {
-           	System.out.println ("SpawnerInLight: Event has Deny Status.");
+
+        // Spawner Spawns acceptable living Entities  (include list later)
+        if (le instanceof PigEntity) {
+        	return;
         }
-        if (event.getResult() == Event.Result.DEFAULT && le instanceof LivingEntity) {
+        if (le instanceof CowEntity) {
+            return;	
+        }
+        if (le instanceof SheepEntity) {
+            return;
+        }
 
-            if (le.collidedHorizontally || le.collidedVertically) {
-            	return;
-            }
+        if (le instanceof BlazeEntity) {
+            return;
+        }
+        
+        System.out.println ("SpawnerInLight: Break / Explode Check.");
 
-            // Tweaks pendingSpawners to prevent light from disabling spawns, except when the entity can see the sun
-            if (event.getEntity() instanceof IMob) {
-            	event.setResult(Event.Result.ALLOW);
-            }    	
+        Random chance = iWorld.getRandom();
+        double next = 100.0 * chance.nextDouble();
+        if (next < MyConfig.spawnersBreakPercentage) {
+        	if (MyConfig.spawnersExplode) {
+        		int flags = 3;  // Update Block- Tell Clients.
+        		iWorld.setBlockState(AbSpPos, Blocks.TNT.getDefaultState(),flags);
+        		iWorld.setBlockState(AbSpPos.down(), Blocks.REDSTONE_BLOCK.getDefaultState(), flags);
+        	} else {
+        		int flags = 3;  // Update Block- Tell Clients.
+        		iWorld.setBlockState(AbSpPos, Blocks.AIR.getDefaultState(),flags);
+        	}
         }
     }
 }

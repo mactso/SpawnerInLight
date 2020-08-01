@@ -3,6 +3,7 @@ package com.mactso.spawnerinlight;
 
 
 import com.mactso.spawnerinlight.config.MyConfig;
+import com.mactso.spawnerinlight.events.MyPlaceEntityEvent;
 import com.mactso.spawnerinlight.events.SpawnerSpawnEvent;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -31,7 +32,9 @@ public class Main {
 		public void preInit (final FMLCommonSetupEvent event) {
 				System.out.println("Spawner In Light: Registering Handler");
 				MinecraftForge.EVENT_BUS.register(new SpawnerSpawnEvent());
-				
-		}       
+				MinecraftForge.EVENT_BUS.register(new MyPlaceEntityEvent());
+		}   
+		
+		
 
 }
