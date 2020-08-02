@@ -5,10 +5,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.TorchBlock;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Items;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.feature.GlowstoneBlobFeature;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraft.util.math.BlockPos;
@@ -21,25 +23,36 @@ public class MyPlaceEntityEvent {
     public void onPlaceBlock(BlockEvent.EntityPlaceEvent event) {
     	Entity entityPlaced = event.getEntity();
     	IWorld iWorld = event.getWorld();
+
+    	if (iWorld instanceof ClientWorld) {
+    		return;
+    	}
+    	// is player available?
+    	
     	String name = entityPlaced.getCachedUniqueIdString();
     	BlockState placedBlockState = event.getPlacedBlock();
     	int blockLightValue = placedBlockState.getLightValue();
     	BlockPos placedBlockPos = event.getPos();
     	Block placedBlock = placedBlockState.getBlock();
-    	// okay to place lights outside.
-    	if (iWorld.canSeeSky(placedBlockPos)) {
-    		return;
-    	}
+    	
+//    	// okay to place lights outside .
+//    	if (iWorld.canSeeSky(placedBlockPos)) {
+//    		return;
+//    	}
 
+    	if ((blockLightValue < 8)&&(placedBlock != Blocks.REDSTONE_LAMP)) {
+    		return;
+    	}  
+    	
     	// okay to place lights in already bright areas.
-    	if (iWorld.getLightValue(placedBlockPos)>14) {
+    	int light = iWorld.getLight(placedBlockPos);
+
+    	if (light==15) {
     		return;
     	}
     	
     	// placing dark light that's not a redstone lamp.
-    	if ((blockLightValue < 8)&&(placedBlock != Blocks.REDSTONE_LAMP)) {
-    		return;
-    	}    	
+  	
     	if (SpawnerNearby(iWorld, placedBlockPos)) {
     		event.setCanceled(true);
     	}

@@ -8,7 +8,8 @@ package com.mactso.spawnerinlight.config;
 
 	import net.minecraftforge.common.ForgeConfigSpec;
 	import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-	import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 	import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 	import net.minecraftforge.eventbus.api.SubscribeEvent;
 	import net.minecraftforge.fml.common.Mod;
@@ -29,9 +30,9 @@ package com.mactso.spawnerinlight.config;
 		}
 
 		public static int debugLevel;
-		public static boolean spawnersSpawnInLight;
-		public static boolean spawnersExplode;
-		public static double spawnersBreakPercentage;
+		public static double spawnersExplodePercentage;
+		public static String[]  defaultMobBreakPercentageValues;
+		public static String    defaultMobBreakPercentageValues6464;
 		
 		@SubscribeEvent
 		public static void onModConfigEvent(final ModConfig.ModConfigEvent configEvent)
@@ -39,26 +40,50 @@ package com.mactso.spawnerinlight.config;
 			if (configEvent.getConfig().getSpec() == MyConfig.SERVER_SPEC)
 			{
 				bakeConfig();
+				MobSpawnerBreakPercentageItemManager.mobBreakPercentageInit();
 			}
 		}
 
+		public static void pushDebugValue() {
+			if (debugLevel > 0) {
+				System.out.println("dbgL:"+MyConfig.debugLevel);
+			}
+			SERVER.debugLevel.set( MyConfig.debugLevel);
+		}
+
+		public static void pushSpawnersExplodePercentage() {
+			if (debugLevel > 0) {
+				System.out.println("dbgL:"+MyConfig.spawnersExplodePercentage);
+			}
+			SERVER.spawnersExplodePercentage.set( MyConfig.spawnersExplodePercentage);
+		}
+		
 		public static void bakeConfig()
 		{
 			debugLevel = SERVER.debugLevel.get();
-			spawnersSpawnInLight = SERVER.spawnersSpawnInLight.get();
-			spawnersExplode = SERVER.spawnersExplode.get();
-			spawnersBreakPercentage = SERVER.spawnersBreakPercentage.get();
-
+			spawnersExplodePercentage = SERVER.spawnersExplodePercentage.get();
+			defaultMobBreakPercentageValues6464 = SERVER.defaultNoBreakMobsActual.get() ;
+			if (debugLevel > 0) {
+				System.out.println("Harder Spawners Debug: " + debugLevel );
+			}
 		}
 
-
+		
+		
 		public static class Server
 		{
 
 			public final IntValue debugLevel;
-			public static BooleanValue spawnersSpawnInLight;
-			public static BooleanValue spawnersExplode;
-			public static DoubleValue spawnersBreakPercentage;
+			public final DoubleValue spawnersExplodePercentage;
+			public final ConfigValue<String> defaultNoBreakMobsActual;
+			public final String defaultNoBreakMobs6464 = 
+					  "harderspawners:default,0.2;"
+					+ "minecraft:pig,0.0;"
+					+ "minecraft:cow,0.0;"
+					+ "minecraft:sheep,0.0;"
+					+ "minecraft:parrot,0.0;"
+					+ "minecraft:blaze,0.0;"
+					;	
 			
 			public Server(ForgeConfigSpec.Builder builder)
 			{
@@ -68,22 +93,21 @@ package com.mactso.spawnerinlight.config;
 						.comment("Debug Level: 0 = Off, 1 = Log, 2 = Chat+Log")
 						.translation(Main.MODID + ".config." + "debugLevel")
 						.defineInRange("debugLevel", () -> 0, 0, 2);
-			
-				spawnersBreakPercentage = builder
-						.comment("Spawner Break Percentage")
-						.translation(Main.MODID + ".config." + "spawnersBreakPercentage")
-						.defineInRange("spawnersBreakPercentage", () -> .02, 0.0, 10.0);
-				spawnersSpawnInLight = builder
-						.comment("Spawners in Light avail config value")
-						.translation(Main.MODID + ".config." + "spawnersSpawnInLight")
-						.define ("spawnersSpawnInLight", () -> true);
-				
-				spawnersExplode = builder
-						.comment("Spawners Explode on Break")
-						.translation(Main.MODID + ".config." + "spawnersExplode")
-						.define ("spawnersExplode", () -> true);
+		
+				spawnersExplodePercentage = builder
+						.comment("Explode percentage when Spawners Break")
+						.translation(Main.MODID + ".config." + "spawnersExplodePercentage")
+						.defineInRange("spawnersExplodePercentage", () -> 33.0, 0.0, 100.0);
 				
 				builder.pop();
+				
+				builder.push ("No Break Mobs Values 6464");
+				
+				defaultNoBreakMobsActual = builder
+						.comment("Trail Block String 6464")
+						.translation(Main.MODID + ".config" + "defaultNoBreakMobsActual")
+						.define("defaultNoBreakMobsActual", defaultNoBreakMobs6464);
+				builder.pop();	
 			}
 		}	
 }

@@ -1,4 +1,4 @@
-// 15.2 - 1.0.0.0 Villager Respawn
+// 16.1 harder spawners
 package com.mactso.spawnerinlight;
 
 
@@ -15,14 +15,14 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-@Mod("spawnerinlight")
+@Mod("harderspawners")
 public class Main {
 
-	    public static final String MODID = "spawnerinlight"; 
+	    public static final String MODID = "harderspawners"; 
 	    
 	    public Main()
 	    {
-			System.out.println("Spawner In Light: Registering Mod.");
+			System.out.println("harderspawners: Registering Mod.");
 			FMLJavaModLoadingContext.get().getModEventBus().register(this);
 	        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER,MyConfig.SERVER_SPEC );
 	    }
@@ -30,7 +30,7 @@ public class Main {
 
 		@SubscribeEvent 
 		public void preInit (final FMLCommonSetupEvent event) {
-				System.out.println("Spawner In Light: Registering Handler");
+				System.out.println("harderspawners: Registering Handler");
 				MinecraftForge.EVENT_BUS.register(new SpawnerSpawnEvent());
 				MinecraftForge.EVENT_BUS.register(new MyPlaceEntityEvent());
 		}   

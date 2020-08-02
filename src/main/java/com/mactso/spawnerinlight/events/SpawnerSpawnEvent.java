@@ -2,28 +2,19 @@ package com.mactso.spawnerinlight.events;
 
 import java.util.Random;
 
+import com.mactso.spawnerinlight.config.MobSpawnerBreakPercentageItemManager;
+import com.mactso.spawnerinlight.config.MobSpawnerBreakPercentageItemManager.MobSpawnerBreakPercentageItem;
 import com.mactso.spawnerinlight.config.MyConfig;
 
-import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.SpawnerBlock;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.monster.BlazeEntity;
-import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.entity.passive.PigEntity;
-import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.eventbus.api.Event;
 
 
 public class SpawnerSpawnEvent {
@@ -47,44 +38,42 @@ public class SpawnerSpawnEvent {
     	IWorld iWorld = event.getWorld();
     	// check that it's server world.
     	
-    	System.out.println ("SpawnerInLight Checked Spawner Spawn Event.");
+    	System.out.println ("HarderSpawners: Checked Spawner Spawn Event.");
     	boolean spawnOk = false;
 
     	AbstractSpawner AbSp = event.getSpawner();
 
     	BlockPos AbSpPos = AbSp.getSpawnerPosition();
 
-    	System.out.println ("SpawnerInLight: Event has a spawner.");
+    	System.out.println ("HarderSpawners: Event has a spawner.");
 
         LivingEntity le = (LivingEntity) event.getEntityLiving();
-
-        // Spawner Spawns acceptable living Entities  (include list later)
-        if (le instanceof PigEntity) {
-        	return;
-        }
-        if (le instanceof CowEntity) {
-            return;	
-        }
-        if (le instanceof SheepEntity) {
-            return;
-        }
-
-        if (le instanceof BlazeEntity) {
-            return;
-        }
-        
-        System.out.println ("SpawnerInLight: Break / Explode Check.");
+        String leStr = le.getType().getRegistryName().toString();
+		MobSpawnerBreakPercentageItem t = MobSpawnerBreakPercentageItemManager.getMobSpawnerBreakPercentage(leStr);
+	
+		if (t == null) {
+			leStr = "harderspawners:default";
+			t = MobSpawnerBreakPercentageItemManager.getMobSpawnerBreakPercentage(leStr);
+		}
+		
+		double mobSpawnerBreakPercentage = t.getSpawnerBreakPercentage();
+		if (mobSpawnerBreakPercentage == 0.0) {
+				return;
+		} 
+    
+        System.out.println ("HarderSpawners: Break / Explode Check.");
 
         Random chance = iWorld.getRandom();
         double next = 100.0 * chance.nextDouble();
-        if (next < MyConfig.spawnersBreakPercentage) {
-        	if (MyConfig.spawnersExplode) {
+        
+        if (next < mobSpawnerBreakPercentage) {
+        	next = 100.0 * chance.nextDouble();
+        	if (next < MyConfig.spawnersExplodePercentage) {
         		int flags = 3;  // Update Block- Tell Clients.
         		iWorld.setBlockState(AbSpPos, Blocks.TNT.getDefaultState(),flags);
         		iWorld.setBlockState(AbSpPos.down(), Blocks.REDSTONE_BLOCK.getDefaultState(), flags);
         	} else {
-        		int flags = 3;  // Update Block- Tell Clients.
-        		iWorld.setBlockState(AbSpPos, Blocks.AIR.getDefaultState(),flags);
+        		iWorld.destroyBlock(AbSpPos, false);
         	}
         }
     }
