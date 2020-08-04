@@ -1,4 +1,4 @@
-package com.mactso.spawnerinlight.events;
+package com.mactso.harderspawners.events;
 
 
 import net.minecraft.block.Block;

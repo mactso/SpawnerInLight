@@ -1,10 +1,10 @@
-package com.mactso.spawnerinlight.events;
+package com.mactso.harderspawners.events;
 
 import java.util.Random;
 
-import com.mactso.spawnerinlight.config.MobSpawnerBreakPercentageItemManager;
-import com.mactso.spawnerinlight.config.MobSpawnerBreakPercentageItemManager.MobSpawnerBreakPercentageItem;
-import com.mactso.spawnerinlight.config.MyConfig;
+import com.mactso.harderspawners.config.MobSpawnerBreakPercentageItemManager;
+import com.mactso.harderspawners.config.MobSpawnerBreakPercentageItemManager.MobSpawnerBreakPercentageItem;
+import com.mactso.harderspawners.config.MyConfig;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;

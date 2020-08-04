@@ -1,6 +1,4 @@
-package com.mactso.spawnerinlight.config;
-
-//1.15.2-2.0
+package com.mactso.harderspawners.config;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
