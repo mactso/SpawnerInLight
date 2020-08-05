@@ -31,12 +31,13 @@ public class SpawnerBreakEvent {
 
 	    	// this runs on both sides.  
 	    	// On the server to affect the real digging speed.
-	    	// On the client ot affect the apparent visual digging speed.
+	    	// On the client to affect the apparent visual digging speed.
 	    	String debugWorldName = "server-local ";
 	    	PlayerEntity player = event.getPlayer();
-	   		if (player.world.isRemote()) {
+
+	    	if (player.world.isRemote()) {
 	   			debugWorldName = "client-remote ";
-	   		}
+	   		} 
 	   		
 	    	Item playerItem = player.getHeldItemMainhand().getItem();
 //	    	if (!playerItem.canHarvestBlock(p.getHeldItemMainhand(), event.getState())) {
@@ -62,7 +63,7 @@ public class SpawnerBreakEvent {
 		    			if (ei.getDuration() > 10) {
 		    				return;
 		    			}
-		    			if (ei.getAmplifier() > revengeLevel) {
+		    			if ((ei.getDuration() < 1) || (ei.getAmplifier() > revengeLevel)) {
 		    				player.removeActivePotionEffect(Effects.POISON );
 		    			}
 		    		}
@@ -76,11 +77,12 @@ public class SpawnerBreakEvent {
 	    	float baseDestroySpeed = event.getOriginalSpeed();
 			float newDestroySpeed = baseDestroySpeed;
 
+
 			if (MyConfig.spawnerBreakSpeedMultiplier>0) {
 				newDestroySpeed = newDestroySpeed / (1 + MyConfig.spawnerBreakSpeedMultiplier);
 				if (newDestroySpeed > 0) {
 					event.setNewSpeed(newDestroySpeed);
-					if (player instanceof ClientPlayerEntity) {
+					if (!(player instanceof ServerPlayerEntity)) {
 						if ((spamLimiter++)%20 == 0) {
 							MyConfig.sendChat(player, "The spawner slowly breaks...", TextFormatting.DARK_AQUA);
 						}

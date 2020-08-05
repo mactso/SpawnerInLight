@@ -9,6 +9,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Items;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.GlowstoneBlobFeature;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -21,15 +22,17 @@ public class MyPlaceEntityEvent {
 
     @SubscribeEvent()
     public void onPlaceBlock(BlockEvent.EntityPlaceEvent event) {
-    	Entity entityPlaced = event.getEntity();
-    	IWorld iWorld = event.getWorld();
+    	Entity entityPlacingBlock = event.getEntity();
 
-    	if (iWorld instanceof ClientWorld) {
+    	if (entityPlacingBlock.world.isRemote()) {
     		return;
     	}
+    	World world = entityPlacingBlock.world;
+    	
+
     	// is player available?
     	
-    	String name = entityPlaced.getCachedUniqueIdString();
+    	String name = entityPlacingBlock.getCachedUniqueIdString();
     	BlockState placedBlockState = event.getPlacedBlock();
     	int blockLightValue = placedBlockState.getLightValue();
     	BlockPos placedBlockPos = event.getPos();
@@ -45,7 +48,7 @@ public class MyPlaceEntityEvent {
     	}  
     	
     	// okay to place lights in already bright areas.
-    	int light = iWorld.getLight(placedBlockPos);
+    	int light = world.getLight(placedBlockPos);
 
     	if (light==15) {
     		return;
@@ -53,7 +56,7 @@ public class MyPlaceEntityEvent {
     	
     	// placing dark light that's not a redstone lamp.
   	
-    	if (SpawnerNearby(iWorld, placedBlockPos)) {
+    	if (isSpawnerNearby(world, placedBlockPos)) {
     		event.setCanceled(true);
     	}
     	
@@ -66,7 +69,7 @@ public class MyPlaceEntityEvent {
     	
     }
     
-    private boolean SpawnerNearby (IWorld iWorld, BlockPos blockPos) {
+    private boolean isSpawnerNearby (World world, BlockPos blockPos) {
 
     	int x = blockPos.getX();
     	int y = blockPos.getY();
@@ -77,7 +80,7 @@ public class MyPlaceEntityEvent {
 		for ( dy=-1;dy<2;dy++) {
 			for( dx=-1;dx<2;dx++) {
 				for( dz=-1;dz<2;dz++) {
-					Block tempBlock = iWorld.getBlockState(new BlockPos (x+dx,y+dy,z+dz)).getBlock();
+					Block tempBlock = world.getBlockState(new BlockPos (x+dx,y+dy,z+dz)).getBlock();
 					if (tempBlock == Blocks.SPAWNER) {
 						return true;
 					}
@@ -86,9 +89,9 @@ public class MyPlaceEntityEvent {
 		}
 		// slower scan for spawner
     	for ( dy=-1;dy<3;dy++) {
-			for( dx=-5;dx<5;dx++) {
-				for( dz=-5;dz<5;dz++) {
-					Block tempBlock = iWorld.getBlockState(new BlockPos (x+dx,y+dy,z+dz)).getBlock();
+			for( dx=-6;dx<6;dx++) {
+				for( dz=-6;dz<6;dz++) {
+					Block tempBlock = world.getBlockState(new BlockPos (x+dx,y+dy,z+dz)).getBlock();
 					if (tempBlock == Blocks.SPAWNER) {
 						return true;
 					}
